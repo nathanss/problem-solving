@@ -13,8 +13,8 @@ class Graph {
     }
 
     root.visit();
-    root.visited = true;
     if (root.data === data) {
+      this.clearVisits();
       return root;
     }
 
@@ -27,6 +27,34 @@ class Graph {
       }
     }
     return null;
+  }
+
+  searchBFS(root, data) {
+    if (root === null) {
+      return null;
+    }
+    const queue = [];
+    queue.push(root);
+    while (queue.length > 0) {
+      const node = queue.shift();
+      if (!node.visited) {
+        node.visit();
+        if (node.data === data) {
+          this.clearVisits();
+          return node;
+        }
+        for (let adjacent of node.adjacents) {
+          queue.push(adjacent);
+        }
+      }
+    }
+    return null;
+  }
+
+  clearVisits() {
+    for (let node of this.nodes) {
+      delete node.visited;
+    }
   }
 }
 
@@ -41,6 +69,7 @@ class Node {
   }
 
   visit() {
+    this.visited = true;
     console.log(this.data);
   }
 }
@@ -48,10 +77,13 @@ class Node {
 const node1 = new Node(1);
 const node2 = new Node(2);
 const node3 = new Node(3);
+const node4 = new Node(4);
 
 node1.addAdjacent(node2);
+node1.addAdjacent(node4);
 node2.addAdjacent(node3);
 
-const graph = new Graph([node1, node2, node3]);
+const graph = new Graph([node1, node2, node3, node4]);
 
-console.log(graph.searchDFS(node1, 3));
+console.log(graph.searchDFS(node1, 4));
+console.log(graph.searchBFS(node1, 4));
